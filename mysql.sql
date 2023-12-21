@@ -58,7 +58,7 @@ GROUP BY YEAR(`enrolment_date`);
 
 SELECT `office_address`, COUNT(*) AS `num_teachers` 
 FROM `teachers` 
-GROUP BY `office_address`
+GROUP BY `office_address`;
 
 -- 3. Calcolare la media dei voti di ogni appello d'esame
 
@@ -72,4 +72,54 @@ SELECT `departments`.`name`, COUNT(`degrees`.`id`) AS `num_courses`
 FROM `departments`
 INNER JOIN `degrees`
 ON `departments`.`id` = `degrees`.`department_id`
-GROUP BY `departments`.`name`
+GROUP BY `departments`.`name`;
+
+---------------------------------------------------------------------------------------------------------------- JOIN
+
+-- 1. Selezionare tutti gli studenti iscritti al Corso di Laurea in Economia
+
+SELECT `students`.`name`, `students`.`surname`, `degrees`.`name` AS `degrees_name`
+FROM `students`
+JOIN `degrees`
+ON `students`.`degree_id` = `degrees`.`id`
+WHERE `degrees`.`name` = 'Corso di Laurea in Economia';
+
+-- 2. Selezionare tutti i Corsi di Laurea Magistrale del Dipartimento di Neuroscienze
+
+SELECT *
+FROM `degrees`
+JOIN `departments`
+ON `degrees`.`department_id` = `departments`.`id`
+WHERE `degrees`.`level` = 'magistrale'
+AND `departments`.`name` = 'Dipartimento di Neuroscienze';
+
+-- 3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
+
+SELECT *
+FROM `courses`
+JOIN `course_teacher`
+ON `courses`.`id` = `course_teacher`.`course_id`
+JOIN `teachers`
+ON `teachers`.`id` = `course_teacher`.`teacher_id`
+WHERE `teachers`.`id` = 44;
+
+-- 4. Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono iscritti e il relativo dipartimento, in ordine alfabetico per cognome e nome
+
+SELECT `students`.`surname`, `students`.`name` AS `student_name`, `degrees`.*, `departments`.`name` AS `departments_name`
+FROM `students`
+JOIN `degrees`
+ON `students`.`degree_id` = `degrees`.`id`
+JOIN `departments`
+ON `departments`.`id` = `degrees`.`department_id`
+ORDER BY `students`.`surname`
+
+-- 5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
+
+SELECT `courses`.*, `teachers`.`name` AS `teachers_name`, `teachers`.`surname`
+FROM `courses`
+JOIN `course_teacher`
+ON `courses`.`id` = `course_teacher`.`course_id`
+JOIN `teachers`
+ON `teachers`.`id` = `course_teacher`.`teacher_id`
+
+
